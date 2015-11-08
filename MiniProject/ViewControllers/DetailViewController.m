@@ -13,7 +13,9 @@
 
 #define kImageRatio     (9.f/16.f)
 
-@interface DetailViewController ()
+@interface DetailViewController () {
+    CGFloat imageHeight;
+}
 
 @property (nonatomic, retain) UIImageView *imageView;
 @property (nonatomic, retain) UIWebView *webView;
@@ -34,15 +36,25 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    [[UIApplication sharedApplication] setStatusBarHidden:NO];
+    
     self.edgesForExtendedLayout = UIRectEdgeNone;   // start view under UINavigationBar
     self.view.backgroundColor = [UIColor whiteColor];
     self.title = _selectedArticle.title;
     
     CGRect viewRect = self.view.frame;
     _imageView = [[UIImageView alloc] init];
-    _imageView.frame = CGRectMake(0, 0, viewRect.size.width, viewRect.size.width * kImageRatio);
+    
+    if (UIDeviceOrientationIsPortrait([UIDevice currentDevice].orientation)) {
+        _imageView.frame = CGRectMake(0, 0, viewRect.size.width, viewRect.size.width * kImageRatio);
+    } else if (UIDeviceOrientationIsLandscape([UIDevice currentDevice].orientation)) {
+        _imageView.frame = CGRectMake(0, 0, viewRect.size.height, viewRect.size.height * kImageRatio);
+    }
+    
     _imageView.contentMode = UIViewContentModeScaleAspectFit;
     _imageView.translatesAutoresizingMaskIntoConstraints = NO;
+    imageHeight = _imageView.frame.size.height;
     
     _webView = [[UIWebView alloc] init];
     CGFloat navBarOffset = self.navigationController.navigationBar.frame.size.height + [[UIApplication sharedApplication] statusBarFrame].size.height;
@@ -151,16 +163,15 @@
         
         // landscape
         
-        CGFloat screenWidth = [UIScreen mainScreen].bounds.size.width;//self.view.bounds.size.width;
-        CGFloat screenHeight = [UIScreen mainScreen].bounds.size.height;//self.view.bounds.size.height;
+        CGFloat screenWidth = self.view.bounds.size.width;
+        CGFloat screenHeight = self.view.bounds.size.height;
         
-        _imageViewTopLayoutConstraint.constant = -140;//(screenHeight - _imageView.frame.size.height) / 2;
+        _imageViewTopLayoutConstraint.constant = -(screenHeight - imageHeight) / 2;
         _imageViewRightLayoutConstraint.constant = -(screenWidth / 2);
         
         _webViewTopLayoutConstraint.constant = 0;
         _webViewLeftLayoutConstraint.constant = screenWidth / 2;
         
-        NSLog(@"%f", _imageView.frame.size.height);
         
     } else {
         
@@ -169,12 +180,9 @@
         _imageViewTopLayoutConstraint.constant = 0;
         _imageViewRightLayoutConstraint.constant = 0;
         
-        _webViewTopLayoutConstraint.constant = 432;//_imageView.frame.size.height;
+        _webViewTopLayoutConstraint.constant = imageHeight;
         _webViewLeftLayoutConstraint.constant = 0;
     }
-    
-    [self.view layoutIfNeeded];
-    [self.view setNeedsLayout];
 }
 
 - (void)loadDetail
@@ -205,7 +213,7 @@
                         NSDictionary *dataDict = [responseDict objectForKey:@"data"];
                         ArticleDetail *detail = [ArticleDetail modelObjectWithDictionary:dataDict];
                         NSString *imageStringURL = [NSString stringWithFormat:@"%@%@", [APIHelper baseURL], detail.image];
-                        [self.imageView setImageWithURL:[NSURL URLWithString:imageStringURL] placeholderImage:nil];
+                        [self.imageView setImageWithURL:[NSURL URLWithString:imageStringURL] placeholderImage:[UIImage imageNamed:@"icon_placeholder"]];
                         [self.webView loadHTMLString:detail.content baseURL:[NSURL URLWithString:[APIHelper baseURL]]];
                         
                     } else {

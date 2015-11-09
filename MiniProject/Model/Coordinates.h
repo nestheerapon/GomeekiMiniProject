@@ -9,11 +9,16 @@
 #import <Foundation/Foundation.h>
 
 
-
+/**
+ * This object model class represents to an Coordinates object
+ */
 @interface Coordinates : NSObject <NSCoding, NSCopying>
 
-@property (nonatomic, strong) NSString *lat;
-@property (nonatomic, strong) NSString *longProperty;
+/* The article latitude */
+@property (nonatomic, strong) NSString *latitude;
+
+/* The article longitude */
+@property (nonatomic, strong) NSString *longitude;
 
 + (instancetype)modelObjectWithDictionary:(NSDictionary *)dict;
 - (instancetype)initWithDictionary:(NSDictionary *)dict;

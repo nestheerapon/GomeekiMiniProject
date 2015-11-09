@@ -10,6 +10,12 @@
 
 @interface UIImageView (URLImage)
 
+/**
+ * Set the imageView 'image' with an 'url' and a placeholder.
+ *
+ * @param url         The url for the image.
+ * @param placeholder The image to be set initially, until the image request finishes.
+ */
 - (void)setImageWithURL:(nullable NSURL *)url placeholderImage:(nullable UIImage *)placeholderImage;
 
 @end

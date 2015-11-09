@@ -65,6 +65,7 @@
             
             if (error) {
                 
+                /* print error log */
                 NSLog(@"%@", error.localizedDescription);
                 
             } else {
@@ -74,7 +75,7 @@
                 
                 if ([statusCode isEqualToString:@"200"]) {
                     
-                    // success
+                    /* success */
                     NSDictionary *dataDict = [responseDict objectForKey:@"data"];
                     NSArray *articles = [dataDict objectForKey:@"articles"];
                     
@@ -88,7 +89,7 @@
                     
                 } else {
                     
-                    // failed, show alert from service
+                    /* failed, show alert from service */
                     NSString *failedTitle = [statusDict objectForKey:@"message"];
                     UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Failed" message:failedTitle delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
                     [alertView show];

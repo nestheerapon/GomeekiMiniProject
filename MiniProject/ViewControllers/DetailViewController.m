@@ -11,6 +11,7 @@
 #import "APIHelper.h"
 #import "ArticleDetail.h"
 
+/* image ratio 16:9 */
 #define kImageRatio     (9.f/16.f)
 
 @interface DetailViewController () {
@@ -39,7 +40,7 @@
     
     [[UIApplication sharedApplication] setStatusBarHidden:NO];
     
-    self.edgesForExtendedLayout = UIRectEdgeNone;   // start view under UINavigationBar
+    self.edgesForExtendedLayout = UIRectEdgeNone; /* start view under UINavigationBar */
     self.view.backgroundColor = [UIColor whiteColor];
     self.title = _selectedArticle.title;
     
@@ -47,8 +48,10 @@
     _imageView = [[UIImageView alloc] init];
     
     if (UIDeviceOrientationIsPortrait([UIDevice currentDevice].orientation)) {
+        /* portrait */
         _imageView.frame = CGRectMake(0, 0, viewRect.size.width, viewRect.size.width * kImageRatio);
     } else if (UIDeviceOrientationIsLandscape([UIDevice currentDevice].orientation)) {
+        /* landscape */
         _imageView.frame = CGRectMake(0, 0, viewRect.size.height, viewRect.size.height * kImageRatio);
     }
     
@@ -57,29 +60,31 @@
     imageHeight = _imageView.frame.size.height;
     
     _webView = [[UIWebView alloc] init];
-    CGFloat navBarOffset = self.navigationController.navigationBar.frame.size.height + [[UIApplication sharedApplication] statusBarFrame].size.height;
-    _webView.frame = CGRectMake(0, CGRectGetHeight(_imageView.frame), viewRect.size.width, viewRect.size.height - CGRectGetHeight(_imageView.frame) - navBarOffset);
+    CGFloat heightOffset = self.navigationController.navigationBar.frame.size.height + [[UIApplication sharedApplication] statusBarFrame].size.height; /* navigation bar height + status bar height */
+    _webView.frame = CGRectMake(0, CGRectGetHeight(_imageView.frame), viewRect.size.width, viewRect.size.height - CGRectGetHeight(_imageView.frame) - heightOffset);
     _webView.backgroundColor = [UIColor clearColor];
     _webView.translatesAutoresizingMaskIntoConstraints = NO;
     
     [self.view addSubview:_imageView];
     [self.view addSubview:_webView];
     
-    [self addConstraintToDetailView];
+    [self initializeViewLayoutConstraint];
     [self loadDetail];
 }
 
-- (void)addConstraintToDetailView
+- (void)initializeViewLayoutConstraint
 {
-    //
-    //  Constraints for imageView
-    //
+    /**
+     *  Constraints for imageView
+     */
     
     _imageViewTopLayoutConstraint = [NSLayoutConstraint constraintWithItem:_imageView attribute:NSLayoutAttributeTop relatedBy:0 toItem:self.view attribute:NSLayoutAttributeTop multiplier:1 constant:0];
     
-    // add top constraint to imageView
+    /* add top constraint to imageView */
     [self.view addConstraint:_imageViewTopLayoutConstraint];
     
+    
+    /* add left constraint to imageView */
     [self.view addConstraint:[NSLayoutConstraint
                               constraintWithItem:_imageView
                               attribute:NSLayoutAttributeLeft
@@ -89,6 +94,7 @@
                               multiplier:1
                               constant:0]];
     
+    
     _imageViewRightLayoutConstraint = [NSLayoutConstraint
                                        constraintWithItem:_imageView
                                        attribute:NSLayoutAttributeRight
@@ -97,8 +103,11 @@
                                        attribute:NSLayoutAttributeRight
                                        multiplier:1
                                        constant:0];
+    /* add right constraint to imageView */
     [self.view addConstraint:_imageViewRightLayoutConstraint];
     
+    
+    /* add bottom constraint to imageView */
     [self.view addConstraint:[NSLayoutConstraint
                               constraintWithItem:_imageView
                               attribute:NSLayoutAttributeHeight
@@ -110,13 +119,13 @@
     
     
     
-    //
-    //  Constraints for webView
-    //
+    /**
+     *  Constraints for webView
+     */
     
     _webViewTopLayoutConstraint = [NSLayoutConstraint constraintWithItem:_webView attribute:NSLayoutAttributeTop relatedBy:0 toItem:self.view attribute:NSLayoutAttributeTop multiplier:1 constant:0];
     
-    // add top constraint to webView
+    /* add top constraint to webView */
     [self.view addConstraint:_webViewTopLayoutConstraint];
     
     
@@ -129,9 +138,11 @@
                                        attribute:NSLayoutAttributeLeft
                                        multiplier:1
                                        constant:0];
+    /* add left constraint to webView */
     [self.view addConstraint:_webViewLeftLayoutConstraint];
     
     
+    /* add right constraint to webView */
     [self.view addConstraint:[NSLayoutConstraint
                               constraintWithItem:_webView
                               attribute:NSLayoutAttributeRight
@@ -141,6 +152,8 @@
                               multiplier:1
                               constant:0]];
     
+    
+    /* add bottom constraint to webView */
     [self.view addConstraint:[NSLayoutConstraint
                               constraintWithItem:_webView
                               attribute:NSLayoutAttributeBottom
@@ -161,7 +174,7 @@
     
     if (self.view.bounds.size.height < self.view.bounds.size.width) {
         
-        // landscape
+        /* landscape */
         
         CGFloat screenWidth = self.view.bounds.size.width;
         CGFloat screenHeight = self.view.bounds.size.height;
@@ -172,10 +185,9 @@
         _webViewTopLayoutConstraint.constant = 0;
         _webViewLeftLayoutConstraint.constant = screenWidth / 2;
         
-        
     } else {
         
-        // portrait
+        /* portrait */
         
         _imageViewTopLayoutConstraint.constant = 0;
         _imageViewRightLayoutConstraint.constant = 0;
@@ -198,6 +210,7 @@
             
             if (error) {
                 
+                /* print error log */
                 NSLog(@"%@", error.localizedDescription);
                 
             } else {
@@ -209,7 +222,8 @@
                     
                     if ([statusCode isEqualToString:@"200"]) {
                         
-                        // success
+                        /* success */
+                        
                         NSDictionary *dataDict = [responseDict objectForKey:@"data"];
                         ArticleDetail *detail = [ArticleDetail modelObjectWithDictionary:dataDict];
                         NSString *imageStringURL = [NSString stringWithFormat:@"%@%@", [APIHelper baseURL], detail.image];
@@ -218,7 +232,7 @@
                         
                     } else {
                         
-                        // failed, show alert from service
+                        /* failed, show alert from service */
                         NSString *failedTitle = [statusDict objectForKey:@"message"];
                         UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Failed" message:failedTitle delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
                         [alertView show];

@@ -21,8 +21,8 @@ NSString *const kCoordinatesLong = @"long";
 
 @implementation Coordinates
 
-@synthesize lat = _lat;
-@synthesize longProperty = _longProperty;
+@synthesize latitude = _latitude;
+@synthesize longitude = _longitude;
 
 
 + (instancetype)modelObjectWithDictionary:(NSDictionary *)dict
@@ -37,8 +37,8 @@ NSString *const kCoordinatesLong = @"long";
     // This check serves to make sure that a non-NSDictionary object
     // passed into the model class doesn't break the parsing.
     if(self && [dict isKindOfClass:[NSDictionary class]]) {
-            self.lat = [self objectOrNilForKey:kCoordinatesLat fromDictionary:dict];
-            self.longProperty = [self objectOrNilForKey:kCoordinatesLong fromDictionary:dict];
+            self.latitude = [self objectOrNilForKey:kCoordinatesLat fromDictionary:dict];
+            self.longitude = [self objectOrNilForKey:kCoordinatesLong fromDictionary:dict];
 
     }
     
@@ -49,8 +49,8 @@ NSString *const kCoordinatesLong = @"long";
 - (NSDictionary *)dictionaryRepresentation
 {
     NSMutableDictionary *mutableDict = [NSMutableDictionary dictionary];
-    [mutableDict setValue:self.lat forKey:kCoordinatesLat];
-    [mutableDict setValue:self.longProperty forKey:kCoordinatesLong];
+    [mutableDict setValue:self.latitude forKey:kCoordinatesLat];
+    [mutableDict setValue:self.longitude forKey:kCoordinatesLong];
 
     return [NSDictionary dictionaryWithDictionary:mutableDict];
 }
@@ -74,16 +74,16 @@ NSString *const kCoordinatesLong = @"long";
 {
     self = [super init];
 
-    self.lat = [aDecoder decodeObjectForKey:kCoordinatesLat];
-    self.longProperty = [aDecoder decodeObjectForKey:kCoordinatesLong];
+    self.latitude = [aDecoder decodeObjectForKey:kCoordinatesLat];
+    self.longitude = [aDecoder decodeObjectForKey:kCoordinatesLong];
     return self;
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
 
-    [aCoder encodeObject:_lat forKey:kCoordinatesLat];
-    [aCoder encodeObject:_longProperty forKey:kCoordinatesLong];
+    [aCoder encodeObject:_latitude forKey:kCoordinatesLat];
+    [aCoder encodeObject:_longitude forKey:kCoordinatesLong];
 }
 
 - (id)copyWithZone:(NSZone *)zone
@@ -92,8 +92,8 @@ NSString *const kCoordinatesLong = @"long";
     
     if (copy) {
 
-        copy.lat = [self.lat copyWithZone:zone];
-        copy.longProperty = [self.longProperty copyWithZone:zone];
+        copy.latitude = [self.latitude copyWithZone:zone];
+        copy.longitude = [self.longitude copyWithZone:zone];
     }
     
     return copy;
